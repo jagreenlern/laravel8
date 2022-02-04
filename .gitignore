@@ -1,0 +1,17 @@
+/node_modules
+/public/storage
+/vendor
+/.idea
+Homestead.json
+Homestead.yaml
+.env
+/storage
+!/storage/images/header_images/abovethecity.jpg
+/composer.lock
+/themes/*
+!themes/TheWright
+/plugins/*
+!themes/.gitignore
+/resources/assets/ckeditor45
+/resources/assets/ckeditor/samples
+/database/*.db

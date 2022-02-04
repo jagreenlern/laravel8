@@ -1,0 +1,184 @@
+const main_container = document.querySelector('.main-container');
+const search_container = document.querySelector('.search-container');
+const side_menu = document.querySelector('.side-menu');
+const main_content = document.querySelector('main');
+const header_container = document.querySelector('header');
+
+document.querySelector('#nav-button').addEventListener('click', () =>{
+    if (window.innerWidth > 1200) {
+        main_container.classList.toggle('active');
+    }
+
+    if (side_menu.style.display == 'none') {
+        side_menu.style.display = '';
+        if (window.innerWidth <= 768) {
+            search_container.style.display = 'none';
+            header_container.removeAttribute('style');
+        }
+    } else {
+        side_menu.style.display = 'none';
+    } 
+});
+
+document.querySelector('.open-search').addEventListener('click', () =>{
+    if (search_container.style.display == 'none') {
+        if (window.innerWidth <= 768) {
+            header_container.style.height = 'auto';
+            side_menu.style.display = 'none';
+        }
+        search_container.style.display = '';
+    } else {
+        search_container.style.display = 'none';
+        if (window.innerWidth <= 768) {
+            header_container.removeAttribute('style');
+        }
+    } 
+});
+
+const checkWidth = () => {
+    if (window.innerWidth <= 768) {  
+        search_container.style.display = 'none';
+    } else { 
+        search_container.style.display = 'flex';
+    }
+
+    if (window.innerWidth <= 1200) {
+        main_container.classList.remove('active');
+        side_menu.style.display = 'none';
+    } else {
+        main_container.classList.add('active');
+        side_menu.style.display = '';
+    }
+}
+
+checkWidth();
+
+window.addEventListener('resize', () => {
+    checkWidth();
+});
+
+document.querySelector('.scrolltop').addEventListener('click', (e) =>{
+    e.preventDefault();
+    window.scrollTo(0, 0);
+});
+
+window.addEventListener('scroll', function(e) {
+    if (window.scrollY > 100) {
+        document.querySelector('.scrolltop').style.display = 'block';
+    } else {
+        document.querySelector('.scrolltop').style.display = 'none';
+    }
+});
+
+
+jQuery('.logo-container a').on('click', function() {
+    ga('send', 'event', 'Interaccion', 'Click', 'Header - Logo');
+});
+
+jQuery('#nav-button').on('click', function() {
+    ga('send', 'event', 'Interaccion', 'Click', 'Header - Menú de navegación');
+});
+
+jQuery('#homecarousel a').on('click', function() {
+   var title_slider = jQuery(this).attr('title');
+    ga('send', 'event', 'Interaccion', 'Click', 'Slider - '+title_slider);
+});
+
+jQuery('.side-menu a').on('click', function() {
+   var nv_title = jQuery(this).attr('title');
+    ga('send', 'event', 'Interaccion', 'Click', 'Menú lateral- '+ nv_title);
+});
+
+jQuery('.search-container button').on('click', function() {
+    ga('send', 'event', 'Interaccion', 'Click', 'Header - Botón Buscar');
+});
+
+jQuery('.tagcloud a').on('click', function() {
+   var tag_title = jQuery(this).attr('aria-label');
+    ga('send', 'event', 'Interaccion', 'Click', 'Footer - Etiqueta - '+ tag_title);
+});
+
+jQuery('.breadcrumb li a').on('click', function() {
+   var b_title = jQuery(this).text();
+    ga('send', 'event', 'Interaccion', 'Click', 'Miga de pan - '+ b_title);
+});
+
+jQuery('.donate-paypal input').on('click', function() {
+    ga('send', 'event', 'Interaccion', 'Click', 'Columna Izquierda - Donar');
+});
+
+/*jQuery('.archive a').on('click', function() {
+   var a_title = jQuery(this).attr('title');
+    ga('send', 'event', 'Interaccion', 'Click', 'Archive - '+ a_title);
+});*/
+
+jQuery('.navigation a').on('click', function() {
+    ga('send', 'event', 'Interaccion', 'Click', 'Paginación');
+});
+
+jQuery('.scrolltop').on('click', function() {
+    ga('send', 'event', 'Interaccion', 'Click', 'Botón subir arriba');
+});
+
+jQuery('.post-ratings img').on('click', function() {
+    var s_title = jQuery(this).attr('title');
+    ga('send', 'event', 'Interaccion', 'Click', 'Entrada - Valorar- ' + s_title);
+});
+
+jQuery('#commentform .submit').on('click', function() {
+    ga('send', 'event', 'Interaccion', 'Click', 'Entrada - Publicar comentario');
+});
+
+jQuery('.post-rating-stars i').on('mouseenter', function() {
+    var star_hover = jQuery(this).attr('data');
+    jQuery(this).parent().find('svg').each(function() {
+        if (star_hover < jQuery(this).attr('data')) {
+            jQuery(this).parent().find('svg').attr('data-prefix', 'far');
+        } else {
+            jQuery(this).parent().find('svg').attr('data-prefix', 'fas');
+        }
+    });
+});
+
+function postRatingStar(star_clicked) {
+    var star_clicked = parseInt(star_clicked);
+    var id_post = jQuery('.post-rating-stars').attr('data');
+    jQuery('.post-rating-stars').find('svg').each(function() {
+        if (star_clicked < jQuery(this).attr('data')) {
+            jQuery(this).find('svg').attr('data-prefix', 'far');
+        } else {
+            jQuery(this).find('svg').attr('data-prefix', 'fas');
+        } 
+    });
+
+    //console.log(star_clicked);
+
+    jQuery.ajax({
+        //url: "http://localhost/dev/blog/wp-admin/admin-ajax.php",
+        url: "https://www.jose-aguilar.com/blog/wp-admin/admin-ajax.php",
+        type: 'post',
+        dataType: "json",
+        data: {
+            action: 'rating',
+            star: star_clicked,
+            id_post: id_post
+        },
+        success: function(response) {
+            jQuery('.post-rating-confirmation').hide();
+            jQuery('.post-rating-updated').hide();
+
+            /*setTimeout(function() {
+                console.log(response.action);
+            }, 2000);*/
+
+            if (response.saction === 'add') {
+                jQuery('.post-rating-confirmation').show();
+            } else {
+                jQuery('.post-rating-updated').show();
+            }
+
+            jQuery('.post-rating-stars .num-ratings').html(response.total);
+            jQuery('.post-rating-stars .average').html(response.average);
+        }
+    });
+}
